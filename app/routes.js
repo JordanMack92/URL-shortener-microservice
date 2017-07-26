@@ -31,11 +31,8 @@ app.route('/:query')
       else {
         
         //force browser to open corresponding long url (original url)
-        res.send(docs[0]);
-        //res.statusCode = 301;
-        //res.setHeader("Location", docs[1]);
-        //res.end();
-        
+        //res.send(docs[0]['short-URL']);
+        res.redirect(301, docs[0]['real-URL']);
       }
     });
     
