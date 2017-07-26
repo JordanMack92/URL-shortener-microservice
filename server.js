@@ -8,7 +8,8 @@
 var fs = require('fs');
 var express = require('express');
 var app = express();
-v
+var routes = require('./app/routes.js');
+var db = require('./app/database.js');
 
 if (!process.env.DISABLE_XORIGIN) {
   app.use(function(req, res, next) {
@@ -24,6 +25,8 @@ if (!process.env.DISABLE_XORIGIN) {
 }
 
 app.use('/public', express.static(process.cwd() + '/public'));
+app.use('/app', express.static(process.cwd()+ '/app'));
+routes(app);
 
 app.route('/_api/package.json')
   .get(function(req, res, next) {
