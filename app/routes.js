@@ -18,7 +18,7 @@ app.route('/')
 app.route('/https://:url')
     .get(function(req, res) {
       long = 'https://'+req.params.url;
-      if (validUrl.isUri(long)){
+      if (validUrl.isUri(url)){
         //use database.js call function and pass query as argument
         MongoClient.connect(url, function(err, db){
           if(err) throw err
@@ -61,7 +61,7 @@ app.route('/https://:url')
   app.route('/http://:url')
     .get(function(req, res) {
       long = 'http://'+req.params.url;
-      if (validUrl.isUri(long)){
+      if (validUrl.isUri(url)){
         //use database.js call function and pass query as argument
         MongoClient.connect(url, function(err, db){
           if(err) throw err
