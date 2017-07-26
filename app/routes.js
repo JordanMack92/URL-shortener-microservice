@@ -1,5 +1,11 @@
 var validUrl = require('valid-url');
-var db = require('./database.js');
+var mongodb = require('mongodb');
+
+var MongoClient = mongodb.MongoClient;
+
+var url = "mongodb://jordan:mack@ds149551.mlab.com:49551/fcc-backend"
+var short;
+var long;
 
 module.exports = function(app){
 
@@ -9,18 +15,34 @@ app.route('/')
     });
 
 
-app.route('/:query')
+app.route('https://:url')
     .get(function(req, res) {
-      var long = req.params.query;
+      long = 'https://'+req.params.url;
       if (validUrl.isUri(long)){
         //use database.js call function and pass query as argument
-        
-        var short = db.returnUrl(long);
-        
-        var json = {
-          "Original URL": long,
-          "Short URL": short
-        }
+        MongoClient.connect(url, function(err, db){
+          if(err) throw err
+          var collection = db.collection('short-url');
+          var cursor = collection.find( { "real-url": long } );
+          
+          cursor.toArray(function(err, docs){
+            if(docs.length == 0) {
+              short = null;
+            }
+            else {
+              short = docs[0]['short-url'];
+            }
+             var json = {
+                "Original URL": long,
+                "Short URL": short
+              }
+             res.send(json);
+            db.close();
+          });
+          
+          
+          
+        });
         
       }
       else{
