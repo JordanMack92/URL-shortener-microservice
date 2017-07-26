@@ -17,11 +17,12 @@ app.route('/')
   
 app.route('/:query')
   .get(function(req, res){
-  var query = req.paramas.query;
+  var query = req.params.query;
+  var url2 = "https://mack-url-shortener.glitch.me/" + query;
   MongoClient.connect(url, function(err, db){
     if(err) throw err
     var collection = db.collection('short-urls');
-    var cursor = collection.find( { "short-URL": "https://mack-url-shortener.glitch.me/" + query } );
+    var cursor = collection.find( { "short-URL": url2 } );
     
     cursor.toArray(function(err, docs){
       if (docs.length == 0){
@@ -30,7 +31,10 @@ app.route('/:query')
       else {
         
         //force browser to open corresponding long url (original url)
-        
+        res.send(docs[0]);
+        //res.statusCode = 301;
+        //res.setHeader("Location", docs[1]);
+        //res.end();
         
       }
     });
