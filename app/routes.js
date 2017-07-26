@@ -15,22 +15,22 @@ app.route('/')
     });
 
 
-app.route('https://:url')
+app.route('/https://:url')
     .get(function(req, res) {
       long = 'https://'+req.params.url;
       if (validUrl.isUri(long)){
         //use database.js call function and pass query as argument
         MongoClient.connect(url, function(err, db){
           if(err) throw err
-          var collection = db.collection('short-url');
-          var cursor = collection.find( { "real-url": long } );
+          var collection = db.collection('short-urls');
+          var cursor = collection.find( { "real-URL": long } );
           
           cursor.toArray(function(err, docs){
             if(docs.length == 0) {
               short = null;
             }
             else {
-              short = docs[0]['short-url'];
+              short = docs[0]['short-URL'];
             }
              var json = {
                 "Original URL": long,
@@ -39,21 +39,10 @@ app.route('https://:url')
              res.send(json);
             db.close();
           });
-          
-          
-          
         });
-        
       }
       else{
         res.send("Not a valid URL")
       }
-      
 })
-  
-  
-  
-  
-  
-  
 }
