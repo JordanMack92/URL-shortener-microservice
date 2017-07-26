@@ -27,21 +27,72 @@ app.route('/https://:url')
           
           cursor.toArray(function(err, docs){
             if(docs.length == 0) {
-              
-              var num = collection.count({}, function(err,count){
-                console.log(count);
-              });
-              short = "https://mack-url-shortener.glitch.me/"+num;
-            }
-            else {
-              short = docs[0]['short-URL'];
-            }
-             var json = {
+              collection.count({}, function(err,count){
+                
+                short = "https://mack-url-shortener.glitch.me/"+(count+1);
+                collection.insert( {"real-URL": long, "short-URL": short} );
+                var json = {
                 "Original URL": long,
                 "Short URL": short
               }
              res.send(json);
             db.close();
+              });
+              
+            }
+            else {
+              short = docs[0]['short-URL'];
+              var json = {
+                "Original URL": long,
+                "Short URL": short
+              }
+               res.send(json);
+              db.close();
+            }
+             
+          });
+        });
+      }
+      else{
+        res.send("Not a valid URL")
+      }
+})
+  
+  app.route('/http://:url')
+    .get(function(req, res) {
+      long = 'http://'+req.params.url;
+      if (validUrl.isUri(long)){
+        //use database.js call function and pass query as argument
+        MongoClient.connect(url, function(err, db){
+          if(err) throw err
+          var collection = db.collection('short-urls');
+          var cursor = collection.find( { "real-URL": long } );
+          
+          cursor.toArray(function(err, docs){
+            if(docs.length == 0) {
+              collection.count({}, function(err,count){
+                
+                short = "https://mack-url-shortener.glitch.me/"+(count+1);
+                collection.insert( {"real-URL": long, "short-URL": short} );
+                var json = {
+                "Original URL": long,
+                "Short URL": short
+              }
+             res.send(json);
+            db.close();
+              });
+              
+            }
+            else {
+              short = docs[0]['short-URL'];
+              var json = {
+                "Original URL": long,
+                "Short URL": short
+              }
+               res.send(json);
+              db.close();
+            }
+             
           });
         });
       }
