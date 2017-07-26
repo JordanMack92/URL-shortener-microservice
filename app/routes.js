@@ -27,7 +27,11 @@ app.route('/https://:url')
           
           cursor.toArray(function(err, docs){
             if(docs.length == 0) {
-              short = null;
+              
+              var num = collection.count({}, function(err,count){
+                console.log(count);
+              });
+              short = "https://mack-url-shortener.glitch.me/"+num;
             }
             else {
               short = docs[0]['short-URL'];
